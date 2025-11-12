@@ -1,0 +1,787 @@
+@extends('User.layout')
+@section('title')
+    Store Details
+@endsection
+@section('content')
+    <style>
+        @property --myColor1 {
+            syntax: "<color>";
+            initial-value: #f5f9fe;
+            inherits: false;
+        }
+
+        .custom_card-01>a {
+            height: 175px;
+        }
+
+        .custom_card-bg {
+            transition: color .3s linear, --myColor1 .3s;
+            background: var(--myColor1);
+            color: var(--basic-green);
+        }
+
+        .custom_card-svg {
+            top: 70%;
+            right: 0%;
+        }
+
+        .custom_card-svg>svg {
+            transform: translateX(-20px);
+            transition: transform .2s linear;
+        }
+
+        .custom_card-01:hover {
+
+            .custom_card-svg>svg {
+                transform: translateX(0px);
+            }
+
+            .custom_card-bg {
+                --myColor1: var(--basic-green);
+                color: #fff;
+            }
+        }
+
+        .dashed_border {
+            border-top: 1px dashed #d9d9d9;
+        }
+    </style>
+    <main class="bg-light">
+
+        <section class="pt-0 pt-md-5 mt-5" style="margin-top: -32px!important;">
+            <div class='container mt-5 '>
+                <div class="d-flex d-md-none pb-3 mb-4 container">
+                    <div class="row align-items-center">
+                        <div class="col-4">
+                            <img src="{{ asset('images/StoreImages/' . @$store->image) }}" alt="{{ @$store->image_alt }}" class="img-fluid w-100 rounded-circle">
+                        </div>
+                        <div class="col-8">
+                            <p class="mb-0 fw-bold h4">
+                                 {{ @$store->name.' '. @$store->headings->name }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class='row g-md-5 flex-lg-row-reverse flex-column-reverse'>
+                    <div class='col-lg-3'>
+                        <div class="border-bottom ps-3 ps-md-0">
+                            <div class="d-none d-md-flex justify-content-center align-items-center mb-4">
+                                <div>
+                                    <img src="{{ asset('images/StoreImages/' . $store->image) }}" loading="eager"
+                                        class="img-fluid  rounded" alt="{{ $store->image_alt }}" width="123"
+                                        height="61">
+                                </div>
+                            </div>
+                            <div class="d-none d-md-block text-center mb-4">
+                                <h1
+                                    class="text-center fw-bold h3 text-decoration-underline border-bottom border-2 border-dark d-inline text-uppercase">
+                                    {{ $store->name }}:
+                                </h1>
+                            </div>
+                            <p>
+                                {!! $store->short_description !!}
+                            </p>
+                        </div>
+
+
+                    </div>
+                    <div class='col-lg-9 mt-3'>
+                        <div class="row gx-5 gy-3 mb-4 px-4 px-md-0">
+
+                            @forelse ($store->coupons as $coupons)
+                                <div class="col-lg-6 col-md-6 custom_card-01 copyCoupon openModal" data-url="{{ @$coupons->stores->tracking_url }}" data-id='{{ $coupons->id }}'
+                                    data-clipboard-target="#code{{ $coupons->id }}">
+                                    <input type="hidden"
+                                        class="text-center border-0 fw-semibold m-0 px-4 px-lg-5 coupon-code-input"
+                                        style="outline:none!important;" value="{{ $coupons->coupon_code }}"
+                                        id="code{{ $coupons->id }}" readonly>
+                                    <a href="#"
+                                        class="border rounded overflow-hidden row text-decoration-none text-dark bg-white shadow-sm">
+                                        <div class="col-sm-4 col-4 p-0">
+                                            <div class="h-100 d-flex flex-column position-relative">
+                                                <div class="custom_card-bg h-100 d-flex align-items-center">
+                                                    <div class="text-center w-100">
+                                                    @php $shippingOffer = !empty($coupons->shipping_offer)
+                                                            ? explode('-', $coupons->shipping_offer)
+                                                            : '';
+
+                                                    @endphp
+                                                       @if(isset($coupons->shipping_offer) && $coupons->shipping_offer != 'Free Shipping' && $coupons->shipping_offer != 'free shipping' && !empty($coupons->shipping_offer) && $coupons->shipping_offer != null)
+                                                        <div style="font-size:24px" class="lh-sm">
+                                                            {!! \Str::limit($shippingOffer[0], 9, '...') ?? '' !!}
+                                                        </div>
+                                                        <div class="bottom-text fw-bold text-center ">
+                                                            {!! \Str::limit($shippingOffer[1], 9, '...') ?? '' !!}
+                                                        </div>
+                                                        @else
+                                                        <div>
+                                                            <img src="{{asset('images/StoreImages/'.$store->image)}}" class="img-fluid">
+                                                        </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                @if ($coupons->exclusive_button == 1)
+                                                    <div class="position-absolute  text-end p-0">
+                                                        <span
+                                                            class="m-0 py-0 px-3 text-light small float-right me-2 bg-secondary">Exclusive</span>
+                                                    </div>
+                                                @endif
+                                                @if ($coupons->verified_button == 1)
+                                                    <div
+                                                        class="bg-secondary position-absolute bottom-0 w-100 d-flex align-items-center justify-content-between p-1">
+                                                        <p class="mb-0 text-white small ps-2">Verified</p>
+                                                        <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+                                                            width="1.1rem" height="1.1rem"
+                                                            viewBox="0 0 96.000000 96.000000"
+                                                            preserveAspectRatio="xMidYMid meet">
+                                                            <g transform="translate(0.000000,96.000000) scale(0.100000,-0.100000)"
+                                                                fill="#fff" stroke="none">
+                                                                <path
+                                                                    d="M427 832 l-48 -49 -68 12 -69 12 -6 -51 c-12 -88 -14 -91 -77 -121 -32 -16 -59 -30 -59 -32 0 -2 14 -30 30 -63 l30 -60 -31 -61 c-16 -34 -29 -62 -27 -64 2 -1 26 -14 55 -29 61 -30 69 -42 78 -117 l7 -55 66 11 67 12 53 -51 52 -50 53 50 52 51 67 -12 66 -11 7 54 c10 77 10 78 74 113 31 18 57 33 59 35 2 1 -11 29 -27 63 l-31 61 31 61 c16 34 29 62 27 63 -2 2 -28 17 -59 35 -64 35 -64 36 -74 113 l-7 55 -68 -12 -69 -12 -48 49 c-26 26 -50 48 -53 48 -3 0 -27 -22 -53 -48z m93 -72 c40 -39 40 -39 91 -30 29 6 53 10 55 10 1 0 6 -25 9 -55 7 -55 9 -56 56 -81 27 -13 49 -26 49 -29 0 -2 -10 -25 -22 -50 l-22 -45 22 -45 c12 -25 22 -48 22 -50 0 -3 -22 -16 -49 -29 -47 -25 -49 -26 -56 -81 -3 -30 -8 -55 -9 -55 -2 0 -26 4 -55 10 -51 9 -51 9 -91 -30 l-40 -39 -38 40 -39 39 -53 -10 c-29 -5 -54 -10 -56 -10 -1 0 -6 25 -9 55 -7 55 -9 56 -56 81 -27 13 -49 26 -49 29 0 2 10 25 22 50 l22 45 -22 45 c-12 25 -22 48 -22 50 0 3 22 16 49 29 48 25 49 26 56 81 7 56 7 56 36 51 86 -17 82 -18 119 23 19 21 36 39 37 40 1 1 20 -17 43 -39z" />
+                                                                <path
+                                                                    d="M513 508 l-93 -93 -50 50 -50 49 -22 -22 -23 -22 73 -73 72 -72 116 116 116 117 -21 21 c-11 11 -22 21 -24 21 -1 0 -44 -42 -94 -92z" />
+                                                            </g>
+                                                        </svg>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-8 col-8 p-0 d-flex flex-column justify-content-between">
+                                            <div class="pt-3 ps-lg-4 ps-2 pe-0 pe-md-4 position-relative">
+                                                <div class="position-absolute me-3 custom_card-svg overflow-hidden">
+                                                    <svg width="1rem" height="1rem" viewBox="0 0 11 19" fill="#000"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M1.27624 0.58252L11 9.58252L1.27624 18.5825L9.53674e-07 17.4013L7.53591 10.4263L8.39972 9.58252L7.53591 8.73877L9.53674e-07 1.76377L1.27624 0.58252Z">
+                                                        </path>
+                                                    </svg>
+                                                </div>
+                                                <ul class="list-unstyled d-flex flex-wrap gap-2">
+                                                    @if ($coupons->coupon_type == 1)
+                                                        <li class="d-flex align-items-center bg-secondary px-2 gap-1">
+                                                            <div>
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 448 512" width="1rem" height="1rem">
+                                                                    <path
+                                                                        d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+                                                                </svg>
+                                                            </div>
+                                                            <p class="mb-0 small text-uppercase text-white">Code</p>
+                                                        </li>
+                                                    @else
+                                                        <li class="d-flex align-items-center bg-secondary px-2 gap-1">
+                                                            <div>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1rem"
+                                                                    height="1rem" viewBox="0 0 384 512">
+                                                                    <path
+                                                                        d="M374.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-320 320c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l320-320zM128 128A64 64 0 1 0 0 128a64 64 0 1 0 128 0zM384 384a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z">
+                                                                    </path>
+                                                                </svg>
+                                                            </div>
+                                                            <p class="mb-0 small text-uppercase text-white">Deal</p>
+                                                        </li>
+                                                    @endif
+                                                </ul>
+                                                <h3 class="f-16">
+                                                    {!! $coupons->offer_name !!}
+                                                </h3>
+                                            </div>
+                                            <div class="d-flex justify-content-end px-2 small py-1 dashed_border">
+                                                <p class="mb-0">Exp. {{ $coupons->expiry_date }}</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @empty
+                                <div class="">
+                                    <p class="text-danger">No coupons Found!</p>
+                                </div>
+                            @endforelse
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {{-- <section class="bg-white mb-md-5 mb-sm-3">
+            <div class="container">
+                <div class="row d-flex flex-row">
+                    <div class="col-lg-3 col-md-3 upper-card col-4 p-0 p-sm-3 position-relative">
+                        <div class="mb-3 store-card mx-auto mt-3 main-img d-flex shadow position-absolute img-thumbnail">
+                            <img src="{{ asset('images/StoreImages/' . $store->image) }}" width="77px" height="40px"
+                                alt="" class="img-fluid w-100">
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-9  col-6 d-flex align-items-center align-items-lg-start">
+                        <div>
+                            <h1 class="fw-bold ps-2 ps-md-0 store-text h1 text-capitalize custom-main-heading mt-3">
+                                {{ $store->name }} <small
+                                    class="text-purple fw-lighter">{{ @$store->headings->name }}</small>
+                            </h1>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="container ">
+                <div class="row">
+                    <div class="col-lg-3 mt-5 mb-5 order-lg-first order-md-last order-sm-last order-last">
+                        <div class="mt-5 pt-lg-2">
+
+                        </div>
+                        <div class=" mt-5">
+                            <h2 class="text-uppercase text-dark small fw-bold">
+                                <p>About {{ $store->name }}</p>
+                            </h2>
+
+                            <div class="mt-2" style="overflow:hidden">
+
+                                <p class="custom-shutter-text text-truncate small text-muted">
+
+
+                                    <input type="hidden" class="text" value="{{ $store->short_description }}">
+
+
+                                </p>
+                                <button class="btn w-100" onclick="shutter()">
+                                    <input type="hidden" class="storeName" value="{{ $store->name }}">
+                                    <u>
+                                        <small class="custom-shutter-button" data-name="{{ $store->name }}">
+                                            More about {{ $store->name }}
+                                        </small>
+                                    </u>
+                                </button>
+                            </div>
+
+                            <div class="mt-5">
+                                <h2 class="fs-6 text-dark text-uppercase small">{{ $store->name }} & FAQs
+                                </h2>
+                                <div class="accordion accordion-flush" id="accordionFlushExample">
+                                    @forelse (@$store->store_faqs as $faqs)
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="flush-headingOneOne{{ $faqs->id }}">
+                                                <button
+                                                    class="accordion-button custom-accordion-icon bg-light text-dark ps-0 collapsed"
+                                                    type="button" data-bs-toggle="collapse"
+                                                    data-bs-target="#flush-collapseCustomOne{{ $faqs->id }}"
+                                                    aria-expanded="false"
+                                                    aria-controls="flush-collapseCustomOne{{ $faqs->id }}">
+                                                    {{ $faqs->question }}
+                                                </button>
+                                            </h2>
+                                            <div id="flush-collapseCustomOne{{ $faqs->id }}"
+                                                class="accordion-collapse collapse"
+                                                aria-labelledby="flush-headingOneOne{{ $faqs->id }}"
+                                                data-bs-parent="#accordionFlushExample">
+                                                <div class="accordion-body ps-0 small text-muted bg-light">
+                                                    {{ $faqs->answer }}</div>
+                                            </div>
+                                        </div>
+
+                                    @empty
+                                        <center><span class="text-danger">No FAQ's Found for the Store!</span></center>
+                                    @endforelse
+
+
+                                </div>
+                            </div>
+
+                            <div class="mt-5">
+                                <h2 class="text-dark text-uppercase small fw-bold">Why Trust Us ?</h2>
+                                <p class="text-muted small">{!! $store->long_description !!}</p>
+                                <a href="#" class="text-dark text-capitalize small">Learn how we verify
+                                    coupons</a>
+                            </div>
+
+                            <div class="mt-5">
+                                <h2 class="text-dark text-uppercase small fw-bold">Similar stores</h2>
+                                <ul class="list-unstyled ps-0">
+                                    @forelse ($cate_stores as $category_store)
+                                        <li><a href="{{ route('store_details', str_replace(' ', '-', strtolower($category_store->slug))) }}"
+                                                class="text-decoration-none text-muted small">{{ $category_store->name }}</a>
+                                        @empty
+                                        <li><a href="#" class="text-decoration-none text-muted small">No store
+                                                found</a>
+                                        </li>
+                                    @endforelse
+                                </ul>
+                                <p><a href="{{ route('stores') }}" class="text-dark text-uppercase small fw-bold">View
+                                        All</a></p>
+                            </div>
+
+                            <div class="mt-5">
+                                <h2 class="text-dark text-uppercase small fw-bold">Popular stores</h2>
+                                <ul class="list-unstyled ps-0">
+                                    @forelse ($stores as $storeData)
+                                        <li><a href="{{ route('store_details', str_replace(' ', '-', strtolower($storeData->slug))) }}"
+                                                class="text-decoration-none text-muted small">{{ $storeData->name }}</a>
+                                        @empty
+                                        <li><a href="#" class="text-decoration-none text-muted small">No store
+                                                found</a>
+                                        </li>
+                                    @endforelse
+
+                                </ul>
+                                <p><a href="{{ route('stores') }}" class="text-dark text-uppercase small fw-bold">View
+                                        All</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="col-lg-9 order-lg-last order-md-first order-sm-first order-first mt-lg-0 mt-md-5 mt-5 mt-sm-5">
+
+                        <ul class="nav nav-pills mb-3 gap-2" id="pills-tab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link text-white show active bg-purple" id="pills-all-tab"
+                                    data-bs-toggle="pill" data-bs-target="#pills-all" type="button" role="tab"
+                                    aria-controls="pills-all" aria-selected="true"> All</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link text-white  bg-purple" id="pills-verified-tab"
+                                    data-bs-toggle="pill" data-bs-target="#pills-verified" type="button" role="tab"
+                                    aria-controls="pills-verified" aria-selected="false"> Deals</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link text-white bg-purple" id="pills-unverified-tab"
+                                    data-bs-toggle="pill" data-bs-target="#pills-unverified" type="button"
+                                    role="tab" aria-controls="pills-unverified" aria-selected="false">Codes</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content mb-3 " id="pills-tabContent">
+                            <div class="tab-pane fade active show " id="pills-all" role="tabpanel"
+                                aria-labelledby="pills-all-tab" tabindex="0">
+                                <h2 class="fw-bold fs-3 mb-3">All</h2>
+                                <div class="gap-3 d-flex flex-column ">
+                                    @foreach ($store->coupons as $coupons)
+                                        <input type="hidden"
+                                            class="text-center border-0 fw-semibold m-0 px-4 px-lg-5 coupon-code-input"
+                                            style="outline:none!important;" value="{{ $coupons->coupon_code }}"
+                                            id="code{{ $coupons->id }}" readonly>
+                                        <div class="card custom-card-effect" target='_blank'>
+                                            <div class="d-flex row flex-row copyCoupon openModal "
+                                                data-url="{{ $coupons->tracking_url }}" data-id='{{ $coupons->id }}'
+                                                data-clipboard-target="#code{{ $coupons->id }}">
+                                                <div data-url="{{ $coupons->tracking_url }}"
+                                                    data-id='{{ $coupons->id }}'
+                                                    data-clipboard-target="#code{{ $coupons->id }}"
+                                                    class="col-lg-2 col-xl-2 col-xxl-2 col-md-2  openModal copyCoupon col-4 d-flex justify-content-center img-fluid align-items-center ps-3">
+                                                    <span class="py-3">
+                                                        <p
+                                                            class="text-uppercase h2 text-purple custom-card-img-text ps-1 mt-2 mb-0">
+                                                            @php
+                                                                $shippingOffer = !empty($coupons->shipping_offer)
+                                                                    ? explode('-', $coupons->shipping_offer)
+                                                                    : '';
+
+                                                            @endphp
+                                                                @if(isset($coupons->shipping_offer) && $coupons->shipping_offer != 'Free Shipping' && $coupons->shipping_offer != 'free shipping' && !empty($coupons->shipping_offer) && $coupons->shipping_offer != null)
+                                                            <div style="font-size:24px" class="lh-sm">
+                                                                {!! \Str::limit($shippingOffer[0], 9, '...') ?? '' !!}
+                                                            </div>
+                                                            <div class="bottom-text fw-bold text-center ">
+                                                                {!! \Str::limit($shippingOffer[1], 9, '...') ?? '' !!}
+                                                            </div>
+                                                            @else
+                                                            <div>
+                                                                <img src="{{asset('images/StoreImages/'.$store->image)}}" class="img-fluid">
+                                                            </div>
+                                                            @endif
+                                                        </p>
+                                                    </span>
+                                                </div>
+                                                <div
+                                                    class="col-lg-6 col-xl-7 col-xxl-7 col-md-6 col-8 px-3 ps-2 d-flex justify-content-center flex-column gap-1">
+
+                                                    <h3 class="text-capitalize custom-card-heading openModal copyCoupon"
+                                                        data-url="{{ $coupons->tracking_url }}"
+                                                        data-id='{{ $coupons->id }}'
+                                                        data-clipboard-target="#code{{ $coupons->id }}">
+                                                        {!! $coupons->offer_name !!}
+                                                    </h3>
+
+
+                                                    <span class="d-flex flex-wrap gap-lg-3 gap-md-3 align-items-center">
+                                                        <p class="text-muted small d-flex m-0 ">
+                                                            {{ $coupons->no_clicks }}&nbsp;
+                                                            views
+                                                        </p>
+                                                        @if ($coupons->verified_button == 1)
+                                                            <span class="text-sucess small d-flex align-items-center"><i
+                                                                    class="fas fa-gem me-1"></i>Verified</span>
+                                                        @endif
+                                                        @if ($coupons->exclusive_button == 1)
+                                                            <span class="text-sucess small d-flex align-items-center"><i
+                                                                    class="fas fa-gem me-1"></i>Exclusive</span>
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                                <div
+                                                    class="col-lg-4 custom-card-button col-xl-3 col-xxl-3 col-md-4 d-flex justify-content-center flex-column px-3 align-items-center d-lg-flex d-md-flex ">
+                                                    @if ($coupons->coupon_type == 1)
+                                                        <input type="hidden"
+                                                            class="text-center border-0 fw-semibold m-0 px-4 px-lg-5 coupon-code-input"
+                                                            style="outline:none!important;"
+                                                            value="{{ $coupons->coupon_code }}"
+                                                            id="code{{ $coupons->id }}" readonly>
+                                                        <a href="{{ $coupons->tracking_url ?? '' }}" target="_blank"
+                                                            class="custom-card-btn @if ($coupons->flicker_button == 1) flicker-on @endif  copyCoupon btn text-white custom-card-folded-btn text-capitalize bg-purple fw-bold rounded-5 fs-6 position-relative overflow-hidden openModal custom-card-btn"
+                                                            data-id='{{ $coupons->id }}'
+                                                            data-clipboard-target="#code{{ $coupons->id }}"
+                                                            data-url="{{ $coupons->tracking_url }}">
+                                                            Get Code
+                                                        </a>
+                                                    @else
+                                                        <input type="hidden"
+                                                            class="text-center border-0 fw-semibold m-0 px-4 px-lg-5 coupon-code-input"
+                                                            style="outline:none!important;"
+                                                            value="{{ $coupons->coupon_code }}"
+                                                            id="code{{ $coupons->id }}" readonly>
+                                                        <a href="{{ $coupons->tracking_url ?? '' }}" target="_blank"
+                                                            class="custom-card-btn secondary-button  @if ($coupons->flicker_button == 1) flicker-on @endif text-white  btn copyCoupon custom-card-folded-btn text-capitalize bg-purple fw-bold rounded-5 fs-6 position-relative overflow-hidden openModal custom-card-btn"
+                                                            data-id='{{ $coupons->id }}'
+                                                            data-clipboard-target="#code{{ $coupons->id }}"
+                                                            data-url="{{ $coupons->tracking_url }}">
+                                                            Get Deal
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="accordion accordion-flush py-1" id="accordionFlushExample">
+                                                <div class="accordion-item">
+                                                    <hr class="mb-1">
+                                                    <p class="accordion-header h2" id="flush-headingSix">
+                                                        <button
+                                                            class="accordion-button custom-card-accordion bg-white text-dark py-0 ps-4 collapsed"
+                                                            type="button" data-bs-toggle="collapse"
+                                                            data-bs-target="#flush-collapseCardTwo{{ $coupons->id }}"
+                                                            aria-expanded="false"
+                                                            aria-controls="flush-collapseCardTwo{{ $coupons->id }}">
+                                                            See Details
+                                                        </button>
+                                                    </p>
+                                                    <div id="flush-collapseCardTwo{{ $coupons->id }}"
+                                                        class="accordion-collapse collapse"
+                                                        aria-labelledby="flush-headingSix"
+                                                        data-bs-parent="#accordionFlushExample">
+                                                        <div class="accordion-body">
+                                                            <div class="container-fluid">
+                                                                <small>
+                                                                    {!! $coupons->description !!}
+                                                                </small>
+                                                                <hr>
+                                                                <ul
+                                                                    class="list-unstyled d-flex flex-row gap-3 py-0 my-0 justify-content-center">
+
+                                                                    @foreach ($social as $item)
+                                                                        <li><a href="{{ $item->link }}"
+                                                                                class="text-decoration-none"><i
+                                                                                    class="fs-4 text-purple {{ $item->icon }}"></i></a>
+                                                                        </li>
+                                                                    @endforeach
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                            <div class="tab-pane fade  " id="pills-verified" role="tabpanel"
+                                aria-labelledby="pills-verified-tab" tabindex="0">
+                                <h2 class="fw-bold fs-3 mb-3">Deals</h2>
+                                <div class="gap-3 d-flex flex-column ">
+                                    @foreach ($store->coupons as $coupons)
+                                        @if ($coupons->coupon_type == 0)
+                                            <input type="hidden"
+                                                class="text-center border-0 fw-semibold m-0 px-4 px-lg-5 coupon-code-input"
+                                                style="outline:none!important;" value="{{ $coupons->coupon_code }}"
+                                                id="code{{ $coupons->id }}" readonly>
+                                            <div class="card custom-card-effect  openModal"
+                                                data-url="{{ $coupons->tracking_url }}" data-id='{{ $coupons->id }}'
+                                                data-clipboard-target="#code{{ $coupons->id }}"
+                                                data-id="{{ $coupons->id }}">
+                                                <div class="d-flex row flex-row copyCoupon openModal "
+                                                    data-url="{{ $coupons->tracking_url }}"
+                                                    data-id='{{ $coupons->id }}'
+                                                    data-clipboard-target="#code{{ $coupons->id }}">
+                                                    <div
+                                                        class="col-lg-2 col-xl-2 col-xxl-2 col-md-2 col-4 d-flex justify-content-center img-fluid align-items-center ps-3">
+                                                        <span class="py-3">
+                                                            <p
+                                                                class="text-uppercase text-purple h2 custom-card-img-text ps-1 mt-2 mb-0">
+                                                                @php
+                                                                    $shippingOffer = !empty($coupons->shipping_offer)
+                                                                        ? explode('-', $coupons->shipping_offer)
+                                                                        : '';
+
+                                                                @endphp
+                                                                  @if(isset($coupons->shipping_offer) && $coupons->shipping_offer != 'Free Shipping' && $coupons->shipping_offer != 'free shipping' && !empty($coupons->shipping_offer) && $coupons->shipping_offer != null)
+                                                                    <div style="font-size:24px" class="lh-sm">
+                                                                        {!! \Str::limit($shippingOffer[0], 9, '...') ?? '' !!}
+                                                                    </div>
+                                                                    <div class="bottom-text fw-bold text-center ">
+                                                                        {!! \Str::limit($shippingOffer[1], 9, '...') ?? '' !!}
+                                                                    </div>
+                                                                    @else
+                                                                    <div>
+                                                                        <img src="{{asset('images/StoreImages/'.$store->image)}}" class="img-fluid">
+                                                                    </div>
+                                                                    @endif
+                                                            </p>
+
+                                                        </span>
+                                                    </div>
+                                                    <div
+                                                        class="col-lg-6 col-xl-7 col-xxl-7 col-md-6 col-8 px-3 ps-2 d-flex justify-content-center flex-column gap-1">
+
+                                                        <h3 class="text-capitalize custom-card-heading">
+                                                            {!! $coupons->offer_name !!}
+                                                        </h3>
+
+
+                                                        <span
+                                                            class="d-flex flex-wrap gap-lg-3 gap-md-3 align-items-center">
+                                                            <p class="text-muted small d-flex m-0 ">
+                                                                {{ $coupons->no_clicks }}&nbsp;
+                                                                views
+                                                            </p>
+                                                            @if ($coupons->verified_button == 1)
+                                                                <span
+                                                                    class="text-sucess small d-flex align-items-center"><i
+                                                                        class="fas fa-gem me-1"></i>Verified</span>
+                                                            @endif
+                                                            @if ($coupons->exclusive_button == 1)
+                                                                <span
+                                                                    class="text-sucess small d-flex align-items-center"><i
+                                                                        class="fas fa-gem me-1"></i>Exclusive</span>
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                    <div
+                                                        class="col-lg-4 col-xl-3 col-xxl-3 col-md-4 d-flex justify-content-center flex-column px-3 align-items-center  d-lg-flex d-md-flex ">
+                                                        <input type="hidden"
+                                                            class="text-center border-0 fw-semibold m-0 px-4 px-lg-5 coupon-code-input"
+                                                            style="outline:none!important;"
+                                                            value="{{ $coupons->coupon_code }}"
+                                                            id="code{{ $coupons->id }}" readonly>
+                                                        <a href="{{ $coupons->tracking_url ?? '' }}" target="_blank"
+                                                            class="custom-card-btn secondary-button  @if ($coupons->flicker_button == 1) flicker-on @endif text-white btn copyCoupon custom-card-folded-btn text-capitalize bg-purple fw-bold rounded-5 fs-6 position-relative overflow-hidden openModal custom-card-btn"
+                                                            data-id='{{ $coupons->id }}'
+                                                            data-clipboard-target="#code{{ $coupons->id }}"
+                                                            data-url="{{ $coupons->tracking_url }}">
+                                                            Get Deal
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="accordion accordion-flush py-1" id="accordionFlushExample">
+                                                    <div class="accordion-item">
+                                                        <hr class="mb-1">
+                                                        <p class="accordion-header h2" id="flush-headingSix">
+                                                            <button
+                                                                class="accordion-button custom-card-accordion bg-white text-dark py-0 ps-4 collapsed"
+                                                                type="button" data-bs-toggle="collapse"
+                                                                data-bs-target="#flush-collapseCardTwo{{ $coupons->id }}"
+                                                                aria-expanded="false"
+                                                                aria-controls="flush-collapseCardTwo{{ $coupons->id }}">
+                                                                See Details
+                                                            </button>
+                                                        </p>
+                                                        <div id="flush-collapseCardTwo{{ $coupons->id }}"
+                                                            class="accordion-collapse collapse"
+                                                            aria-labelledby="flush-headingSix"
+                                                            data-bs-parent="#accordionFlushExample">
+                                                            <div class="accordion-body">
+                                                                <div class="container-fluid">
+                                                                    <small>
+                                                                        {!! $coupons->description !!}
+                                                                    </small>
+                                                                    <hr>
+                                                                    <ul
+                                                                        class="list-unstyled d-flex flex-row gap-3 py-0 my-0 justify-content-center">
+
+                                                                        @foreach ($social as $item)
+                                                                            <li><a href="{{ $item->link }}"
+                                                                                    class="text-decoration-none"><i
+                                                                                        class="fs-4 text-purple {{ $item->icon }}"></i></a>
+                                                                            </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                            unverified
+                            <div class="tab-pane fade" id="pills-unverified" role="tabpanel"
+                                aria-labelledby="pills-unverified-tab" tabindex="0">
+                                <div class="mt-2">
+                                    <h2 class="fw-bold fs-3 mb-3">Codes</h2>
+                                    <div class="gap-3 d-flex flex-column mb-3 ">
+                                        @foreach ($store->coupons as $coupons)
+                                            @if ($coupons->coupon_type == 1)
+                                                <input type="hidden"
+                                                    class="text-center border-0 fw-semibold m-0 px-4 px-lg-5 coupon-code-input"
+                                                    style="outline:none!important;" value="{{ $coupons->coupon_code }}"
+                                                    id="code{{ $coupons->id }}" readonly>
+                                                <div class="card custom-card-effect copyCoupon openModal"
+                                                    data-id="{{ $coupons->id }}"
+                                                    data-url="{{ $coupons->tracking_url }}"
+                                                    data-id='{{ $coupons->id }}'
+                                                    data-clipboard-target="#code{{ $coupons->id }}">
+                                                    <div class="d-flex row flex-row copyCoupon openModal "
+                                                        data-url="{{ $coupons->tracking_url }}"
+                                                        data-id='{{ $coupons->id }}'
+                                                        data-clipboard-target="#code{{ $coupons->id }}">
+                                                        <div
+                                                            class="col-lg-2 pt-4 col-xl-2 col-xxl-2 col-md-2 col-4 d-flex justify-content-center img-fluid align-items-center ps-3">
+                                                            <span class="py-3">
+                                                                <p
+                                                                    class="text-uppercase text-purple custom-card-img-text h2 ps-1 mt-2 mb-0">
+                                                                    @php
+                                                                        $shippingOffer = !empty(
+                                                                            $coupons->shipping_offer
+                                                                        )
+                                                                            ? explode('-', $coupons->shipping_offer)
+                                                                            : '';
+
+                                                                    @endphp
+                                                                   @if(isset($coupons->shipping_offer) && $coupons->shipping_offer != 'Free Shipping' && $coupons->shipping_offer != 'free shipping' && !empty($coupons->shipping_offer) && $coupons->shipping_offer != null)
+                                                                    <div style="font-size:24px" class="lh-sm">
+                                                                        {!! \Str::limit($shippingOffer[0], 9, '...') ?? '' !!}
+                                                                    </div>
+                                                                    <div class="bottom-text fw-bold text-center ">
+                                                                        {!! \Str::limit($shippingOffer[1], 9, '...') ?? '' !!}
+                                                                    </div>
+                                                                    @else
+                                                                    <div>
+                                                                        <img src="{{asset('images/StoreImages/'.$store->image)}}" class="img-fluid">
+                                                                    </div>
+                                                                    @endif
+                                                                </p>
+
+                                                            </span>
+
+                                                        </div>
+                                                        <div
+                                                            class="col-lg-6 col-xl-7 col-xxl-7 col-md-6 col-8 px-3 pt-3 ps-2 d-flex justify-content-center flex-column gap-sm-0 gap-1">
+
+                                                            <h3 class="text-capitalize custom-card-heading">
+                                                                {!! $coupons->offer_name !!}
+                                                            </h3>
+                                                            <span
+                                                                class="d-flex flex-wrap gap-lg-3 gap-md-3 align-items-center">
+                                                                <p class="text-muted small d-flex m-0 ">
+                                                                    {{ $coupons->no_clicks }}
+                                                                    views
+                                                                </p>
+
+                                                                @if ($coupons->verified_button == 1)
+                                                                    <span
+                                                                        class="text-sucess small d-flex align-items-center"><i
+                                                                            class="fas fa-gem me-1"></i>Verified</span>
+                                                                @endif
+                                                                @if ($coupons->exclusive_button == 1)
+                                                                    <span
+                                                                        class="text-sucess small d-flex align-items-center"><i
+                                                                            class="fas fa-gem me-1"></i>Exclusive</span>
+                                                                @endif
+                                                            </span>
+                                                        </div>
+                                                        <div
+                                                            class="col-lg-4 col-xl-3 col-xxl-3 col-md-4 d-flex gap-2 py-2 justify-content-center flex-column px-3 align-items-center  d-lg-flex d-md-flex ">
+
+                                                            <input type="hidden"
+                                                                class="text-center border-0 fw-semibold m-0 px-4 px-lg-5 coupon-code-input"
+                                                                style="outline:none!important;"
+                                                                value="{{ $coupons->coupon_code }}"
+                                                                id="code{{ $coupons->id }}" readonly>
+                                                            <a href="{{ $coupons->tracking_url ?? '' }}" target="_blank"
+                                                                class="custom-card-btn @if ($coupons->flicker_button == 1) flicker-on @endif btn copyCoupon text-white custom-card-folded-btn text-capitalize bg-purple fw-bold rounded-5 fs-6 position-relative overflow-hidden openModal custom-card-btn"
+                                                                data-id='{{ $coupons->id }}'
+                                                                data-clipboard-target="#code{{ $coupons->id }}"
+                                                                data-url="{{ $coupons->tracking_url }}">
+                                                                Get Code
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <hr class="mb-0">
+                                                    <div class="accordion accordion-flush py-1"
+                                                        id="accordionFlushExample">
+                                                        <div class="accordion-item">
+                                                            <p class="accordion-header h2" id="flush-headingSix">
+                                                                <button
+                                                                    class="accordion-button custom-card-accordion bg-white text-dark py-0 ps-4 collapsed"
+                                                                    type="button" data-bs-toggle="collapse"
+                                                                    data-bs-target="#flush-collapseCardTwo{{ $coupons->id }}"
+                                                                    aria-expanded="false"
+                                                                    aria-controls="flush-collapseCardTwo{{ $coupons->id }}">
+                                                                    See Details
+                                                                </button>
+                                                            </p>
+                                                            <div id="flush-collapseCardTwo{{ $coupons->id }}"
+                                                                class="accordion-collapse collapse"
+                                                                aria-labelledby="flush-headingSix"
+                                                                data-bs-parent="#accordionFlushExample">
+                                                                <div class="accordion-body">
+                                                                    <div class="container-fluid">
+                                                                        <small>
+                                                                            {!! $coupons->description !!}
+                                                                        </small>
+                                                                        <hr>
+                                                                        <ul
+                                                                            class="list-unstyled d-flex flex-row gap-3 py-0 my-0 justify-content-center">
+
+                                                                            @foreach ($social as $item)
+                                                                                <li><a href="{{ $item->link }}"
+                                                                                        class="text-decoration-none"><i
+                                                                                            class="fs-4 text-purple {{ $item->icon }}"></i></a>
+                                                                                </li>
+                                                                            @endforeach
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endforeach
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section> --}}
+
+    </main>
+    @push('js')
+        <script>
+            $('.custom-shutter-text').html($('.text').val())
+            $(document).ready(function() {
+                let copyButton = new ClipboardJS('.copyCoupon');
+                $(document).on('click', '.openModal', function(event) {
+                    var newTab = window.open();
+                    newTab.location.href = $(this).attr('data-url');
+                });
+            });
+        </script>
+    @endpush
+@endsection

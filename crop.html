@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Croppie CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" />
+
+<!-- Croppie JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+<style>
+    #imageCropModal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border: 1px solid #ccc;
+        z-index: 1000;
+    }
+    
+    .modal-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .modal-content label {
+        margin-right: 10px;
+    }
+    
+    .modal-content input {
+        width: 50px;
+        margin-bottom: 10px;
+    }
+    #croppie-container {
+        margin-bottom: 10px;
+    }
+    
+    #cropped-result {
+        margin-top: 20px;
+        width: 200px; /* Adjust this as needed */
+        height: 200px;
+        border: 1px solid #ccc;
+    }
+    
+</style>
+</head>
+<body>
+<!-- Button to trigger the modal -->
+<button id="upload-image-btn">Upload Image</button>
+
+<!-- Modal -->
+<div id="imageCropModal" style="display: none;">
+    <div class="modal-content">
+        <!-- Inputs for width and height -->
+        <label for="crop-width">Width:</label>
+        <input type="number" id="crop-width" value="200" />
+        
+        <label for="crop-height">Height:</label>
+        <input type="number" id="crop-height" value="200" />
+        
+        <!-- Croppie container -->
+        <div id="croppie-container"></div>
+
+        <button id="crop-image-btn">Crop</button>
+    </div>
+</div>
+
+<!-- Image preview after cropping -->
+<img id="cropped-result" src="" alt="Cropped Image" />
+
+
+</body>
+</html>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var croppieInstance;
+        
+        // Modal and buttons
+        var modal = document.getElementById("imageCropModal");
+        var uploadBtn = document.getElementById("upload-image-btn");
+        var cropBtn = document.getElementById("crop-image-btn");
+        
+        // Input fields for width and height
+        var cropWidthInput = document.getElementById("crop-width");
+        var cropHeightInput = document.getElementById("crop-height");
+    
+        // Cropped result container
+        var croppedResult = document.getElementById("cropped-result");
+    
+        // Function to initialize Croppie with dynamic width and height
+        function initializeCroppie(width, height, imageUrl) {
+            if (croppieInstance) {
+                croppieInstance.destroy();  // Destroy the previous instance if any
+            }
+    
+            // Initialize Croppie with dynamic width and height
+            croppieInstance = new Croppie(document.getElementById('croppie-container'), {
+                viewport: { width: width, height: height },  // Set dynamic viewport size
+                boundary: { width: width + 100, height: height + 100 },  // Adjust boundary
+                showZoomer: true,
+                enableOrientation: true
+            });
+    
+            // Bind the uploaded image to Croppie
+            croppieInstance.bind({
+                url: imageUrl
+            });
+        }
+    
+        // Handle image upload
+        uploadBtn.addEventListener('click', function() {
+            var fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+    
+            fileInput.addEventListener('change', function(event) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    // Show the modal
+                    modal.style.display = "block";
+    
+                    // Get the initial width and height from inputs
+                    var width = parseInt(cropWidthInput.value);
+                    var height = parseInt(cropHeightInput.value);
+    
+                    // Initialize Croppie
+                    initializeCroppie(width, height, e.target.result);
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            });
+            fileInput.click();
+        });
+    
+        // Crop image on button click
+        cropBtn.addEventListener('click', function() {
+            // Get the user-defined width and height for the cropped result
+            var width = parseInt(cropWidthInput.value);
+            var height = parseInt(cropHeightInput.value);
+    
+            croppieInstance.result({
+                type: 'base64',
+                size: { width: width, height: height }  // Apply custom size to the cropped result
+            }).then(function(base64) {
+                // Set the cropped image to the result preview
+                croppedResult.src = base64;
+    
+                // Hide the modal
+                modal.style.display = "none";
+            });
+        });
+    
+        // Update Croppie viewport and boundary when width or height inputs change
+        cropWidthInput.addEventListener('input', function() {
+            var width = parseInt(cropWidthInput.value);
+            var height = parseInt(cropHeightInput.value);
+            if (croppieInstance) {
+                initializeCroppie(width, height, croppieInstance.data.url);  // Reinitialize Croppie with new size
+            }
+        });
+    
+        cropHeightInput.addEventListener('input', function() {
+            var width = parseInt(cropWidthInput.value);
+            var height = parseInt(cropHeightInput.value);
+            if (croppieInstance) {
+                initializeCroppie(width, height, croppieInstance.data.url);  // Reinitialize Croppie with new size
+            }
+        });
+    });
+    </script>
+    
+    
+    

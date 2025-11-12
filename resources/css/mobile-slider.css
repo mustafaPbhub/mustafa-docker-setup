@@ -1,0 +1,97 @@
+.parent-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.897);
+}
+
+.main-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: none;
+    z-index: 99999999;
+}
+
+.sliderContainer {
+    position: relative;
+    display: flex;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    overflow: hidden; /* Prevent overflow */
+}
+
+.slider-container {
+    flex-grow: 1;
+    display: flex; /* Ensure children are displayed flexibly */
+    flex-direction: column; /* Allow vertical stacking */
+}
+
+.bottom-slider {
+    width: calc(100% - 20px);
+    position: absolute;
+    bottom: 8%;
+    margin: 0 10px;
+    background: #dadadab4;
+    box-sizing: border-box;
+    border-radius: 8px;
+    overflow: hidden; /* Prevent overflow */
+}
+
+.top-icon {
+    position: absolute;
+    top: 3%;
+    right: 2%;
+    display: flex;
+    z-index: 1000;
+}
+
+.center-icon-1 {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    bottom: 22%;
+    right: 3%;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+.center-icon-2 {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 75%;
+    right: 5%;
+    z-index: 1000;
+}
+
+.slide_video {
+    height: 100%;
+    width: 100% !important;
+    object-fit: cover!important;
+}
+
+.videoContainer {
+    margin: 20px;
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping for responsiveness */
+    gap: 10px; /* Use gap instead of row-gap and column-gap for simplicity */
+}
+
+.video-box {
+    flex: 1 1 300px; /* Allow flex growth, shrinkage and set base width */
+    max-width: 300px; /* Max width to maintain size */
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+}
+
+.video-box video {
+    max-width: 100%; /* Ensure video fits inside */
+    height: auto; /* Maintain aspect ratio */
+}

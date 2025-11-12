@@ -1,0 +1,214 @@
+a {
+    text-decoration: none;
+}
+
+:root {
+    --primaryColor: #00acc1;
+    --secondaryColor: #266ba9;
+}
+
+.theme-text {
+    color: #000;
+}
+
+.secondary-text {
+    color: var(--secondaryColor);
+}
+
+.custom-btn {
+    background-color: #e64a19;
+    position: relative;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.custom-btn:hover {
+    background-color: var(--primaryColor);
+}
+
+.hover-arrow {
+    display: inline-block;
+    /* Ensures smooth movement */
+    transition: transform 0.3s ease-in-out;
+}
+
+.shield-icon {
+
+    width: 15px !important;
+    height: 15px !important;
+}
+
+.vender-card,
+.vendor-1 {
+    box-shadow: 5px 0px 30px #dd2c004d;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.vender-card:hover,
+.vendor-1:hover {
+    box-shadow: 2px 0px 15px #dd2c004d;
+    /* Adjust the shadow as desired */
+}
+
+.custom-btn:hover .hover-arrow {
+    transform: translateX(5px);
+    /* Moves the arrow slightly to the right */
+}
+
+/* Number badge style */
+.vendor__position {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px;
+    /* Match the ribbon height */
+    width: 35px;
+    background-color: rgba(55, 71, 79, 0.9);
+    /* Slightly darker shade */
+    color: #fff;
+    font-family: "Cabin", Arial, sans-serif;
+    font-weight: 700;
+    /* Consistent bold font weight */
+    font-size: 14px;
+    border-radius: 6px 0 0 0px;
+    z-index: 2;
+    top: 0;
+    left: 0;
+}
+
+/* Ribbon style */
+.vendor__position {
+    background-color: #f57c00 !important;
+}
+
+.vendor__ribbon {
+    position: absolute;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px 0 18px;
+    background-color: #ff9800;
+    color: #fff;
+    font-family: "Cabin", Arial, sans-serif;
+    font-weight: 700;
+    /* Consistent bold font weight */
+    font-size: 14px;
+    border-radius: 0 0px 6px 0;
+    z-index: 3;
+    top: 0;
+    left: 35px;
+    /* Offset to align next to the position badge */
+}
+
+/* Rating Circle */
+.rating-circle {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 4px solid #ffc107;
+    /* Adjusted for the warning color */
+}
+
+/* Main circle container */
+.ring-container {
+    width: 60px;
+    /* Customize size */
+    height: 60px;
+    background-color: #fff;
+    /* Background for main circle */
+    border: 2px solid #9ba3a7;
+    /* Main ring color and thickness */
+    border-radius: 50%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Optional shadow */
+}
+
+/* Main icon inside the ring */
+.main-icon {
+    font-size: 24px;
+    color: var(--primaryColor);
+    /* Customize icon color */
+}
+
+/* Small checkmark circle */
+.checkmark-circle {
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border: 2px solid #9ba3a7;
+    /* Border color for the small circle */
+    border-radius: 50%;
+    bottom: -10px;
+    /* Position below the main circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Checkmark icon inside small circle */
+.check-icon {
+    font-size: 10px;
+    color: var(--primaryColor);
+    /* Customize checkmark color */
+}
+
+/* Optional: Styling for the text below the ring */
+.ring-text a {
+    font-size: 14px;
+    /* Adjust as needed */
+    color: var(--primaryColor);
+    /* Customize color */
+    font-weight: 600;
+    /* Bold text */
+}
+
+.fa-star,
+.fa-star-half-stroke {
+    color: #e64a19;
+}
+
+.banner-img1 {
+    background-image: url("../images/banner_background_img.svg");
+    background-repeat: no-repeat;
+    background-position: 100% 80px;
+}
+
+.banner-img2 {
+    background-image: url("../images/banner-ing2.svg");
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+}
+
+.splide__slide {
+    opacity: 0.6;
+}
+
+.is-active {
+    opacity: 1;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .badge-container {
+        width: 50%;
+        /* Adjust width for tablet screens */
+    }
+
+    .d-md-inline {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .custom-btn {
+        width: 100%;
+    }
+
+    .banner-img2 {
+        background: transparent;
+    }
+}

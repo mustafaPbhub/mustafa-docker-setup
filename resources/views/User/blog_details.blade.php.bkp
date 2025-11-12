@@ -1,0 +1,115 @@
+@extends('User.layout')
+@section('title')
+Blog's Details
+@endsection
+@section('content')
+<main>
+    <style>
+        #long-desc span:has(img)
+        {
+            width:auto !important;
+            height:auto !important;
+        }
+        #long-desc img
+        {
+            max-width:100%;
+            height:auto;
+        }
+    </style>
+
+    <section>
+        <div class="container">
+            <div class="row pt-0 pt-md-5">
+                <div class="col-lg-8">
+                    <nav aria-label="breadcrumb" class="position-relative">
+                        <ol class="breadcrumb fw-semibold">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('home') }}"
+                                    class="text-decoration-none text-dark">Home</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('blog_category' ,strtolower(str_replace(" "  , "-" , @$blog->categories->name))) }}"
+                                    class="text-decoration-none text-dark">{{ @$blog->categories->name }}</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                {!! $blog->title !!}
+                            </li>
+                        </ol>
+                    </nav>
+                    <div>
+                        @php
+                            $createdAt = \Carbon\Carbon::parse($blog->published_at)->format('F  d , Y');
+                        @endphp
+                        <small>{{ $createdAt }}</small>
+                        <h1 class="display-5 fw-bolder">
+                            {!! $blog->title !!}
+                        </h1>
+                    </div>
+                    <div>
+                        <div class="row align-items-center mb-3">
+                            <div class="col-xl-1 col-md-2 col-2">
+                                <img src="https://www.pricerunner.com/user/avatar/prod/profile_6120154852246700868.jpg?d=80x80"
+                                    class="img-fluid rounded-circle border border-5 border-light" alt="" width="49"
+                                    height="49">
+                            </div>
+                            <div class="col-xl-9 col-md-10 col-9 fw-bold text-capitalize" style="position: relative;right: 15px;">{{ empty($blog->author) ? 'Admin' : $blog->author }}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="fs-5" id="short-desc">
+                            {!! $blog->short_description !!}
+                        </p>
+                        <img src="{{ asset('images/blogsImages/' . $blog->image) }}"
+                            class="img-fluid mb-4" alt="{{ $blog->image_alt }}" width="856" height="407">
+                    </div>
+                    <div class="pb-2" id="long-desc">
+                        {!! $blog->long_description !!}
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div>
+                        <h4 class="fw-bold mb-4">Recent Blogs</h4>
+                        <ul class="list-group">
+
+                            @foreach ($recent_blogs as $blog )
+
+                            <li class="list-group-item list-group-item-action border-0">
+                                <a href="{{ route('blog_details' ,strtolower($blog->slug)) }}"
+                                    class="text-dark text-decoration-none">
+                                    <div class="row align-items-center w-100">
+                                        <div class="col-6">
+                                            <img src="{{ asset('images/blogsImages/' . $blog->image) }}"
+                                                class="img-fluid rounded" alt="{{ $blog->image_alt }}" width="200"
+                                                height="100">
+                                        </div>
+                                        <div class="col-6 overflow-hidden">
+                                            <h5 class="f-16 fw-semibold text-truncate mb-0">
+                                                {!! $blog->title !!}
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+
+                            @endforeach
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+@push('js')
+    {{-- <script>
+            $(document).ready(function() {
+                let copyButton = new ClipboardJS('.copyCoupon');
+                $(document).on('click', '.openModal', function(event) {
+                    var newTab = window.open();
+                    newTab.location.href = $(this).attr('data-url');
+                });
+            });
+    </script> --}}
+@endpush
+@endsection

@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /*index.php/
+Disallow: /*?
+Disallow: /*.js
+Disallow: /*.css
+Disallow: /*draftpreview/
+Disallow: /*tag/
+Disallow: /panel/
+
+
+Sitemap: https://activecorefit.com/sitemaps/sitemap.xml

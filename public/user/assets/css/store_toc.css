@@ -1,0 +1,131 @@
+html {
+    scroll-padding-top: 3rem;
+}
+
+@media(max-width:991px) {
+    html {
+        scroll-padding-top: 3rem;
+    }
+}
+
+.w-fit-content {
+    width: fit-content !important;
+}
+
+.outline-none {
+    outline: none !important;
+}
+
+.underliner {
+    text-decoration: none;
+}
+
+.custom-border {
+    border-radius: 0px 10px 10px 10px;
+}
+.list-group-item.list-group-item-action:hover{
+    background:#f7f7f7 !important;
+}
+.text-ellipsis-4 {
+    -webkit-line-clamp: 4 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: -webkit-box !important;
+}
+
+.bg-kinda-subtle {
+    background-color: #F6F6F6 !important;
+}
+
+.dashed-rounded {
+    border: 2px dashed #DC3545;
+}
+
+.x-small {
+    font-size: x-small !important;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+/* -------------------------------custom */
+
+.rightbar .accordion-collapse{
+    max-height: 400px;
+    overflow: scroll;
+}
+.rightbar {
+    position: sticky;
+    top: 22px;
+    left: 0;
+    /* transition: all 1s ease; */
+}
+
+#tableContent {
+    transition: all 1s ease;
+}
+.side-card-main{
+    border: 3px solid;
+}
+.side-card{
+    
+    border-right: 24px solid;
+}
+@media (max-width:991px) {
+
+    .translator {
+        transform: translateY(-200px);
+    }
+
+    #list-scrollspy {
+        max-height: 300px;
+        overflow: scroll;
+    }
+
+    #tableContent {
+        position: fixed;
+        top: 0px;
+        /* adjust acording to navbar height  / 0 if navbar is not fixed. */
+        left: 0;
+        width: 100%;
+        border-radius: 0;
+    }
+}
+
+.check-icon {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' height='18' viewBox='0 0 24 24' width='18' id='check-list'><path d='m9 20.42-6.21-6.21 2.83-2.83 3.38 3.39 9.88-9.89 2.83 2.83z' fill='%2309a858'/></svg>");
+    background-repeat: no-repeat;
+}
+
+.bg-for-hover {
+    background: #F6F6F6;
+    transition: background 0.3s linear;
+}
+
+.bg-for-hover:hover {
+    background: #E4E5E6;
+}
+
+.fs-14px {
+    font-size: 14px !important;
+}
+
+.fs-12px {
+    font-size: 12px !important;
+}
+
+.list-group-item.list-group-item-action.active {
+    font-weight: 600 !important;
+}
+
+.text-link {
+    color: #0050db;
+}
+
+@media (max-width:1199px) {
+    .custom-border {
+        border-radius: 0px 0px 10px 10px;
+    }
+}
