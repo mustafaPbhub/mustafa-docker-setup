@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('blogs', function (Blueprint $table) {
-            $table->integer('page_type')->default(0);
-        });
+      Schema::table('blogs', function (Blueprint $table) {
+    if (!Schema::hasColumn('blogs', 'page_type')) {
+        $table->integer('page_type')->default(0);
+    }
+});
+
     }
 
     /**
