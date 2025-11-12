@@ -1,37 +1,52 @@
-# # Stage 1: Composer install
-# FROM composer:2 AS vendor
-# WORKDIR /app
-# COPY composer.json composer.lock ./
-# RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# # Stage 2: Laravel runtime
-# FROM php:8.2-fpm
+# Composer Dependencies
 
-# # Install system dependencies and PHP extensions
-# RUN apt-get update && apt-get install -y \
-#     libpng-dev \
-#     libjpeg-dev \
-#     libfreetype6-dev \
-#     libzip-dev \
-#     zip \
-#     unzip \
-#     git \
-#     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-#     && docker-php-ext-install gd pdo pdo_mysql zip exif \
-#     && docker-php-ext-enable gd
+FROM php:8.2-fpm-alpine AS vendor
 
-# WORKDIR /var/www/html
+RUN apk add --no-cache git unzip libpng-dev libjpeg-turbo-dev freetype-dev oniguruma-dev libzip-dev icu-dev \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd zip pdo_mysql intl \
+    && apk del .build-deps \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# # Copy vendor from build stage
-# COPY --from=vendor /app/vendor /var/www/html/vendor
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# # Copy app source code
-# COPY . /var/www/html
 
-# # Set permissions 
-# RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+#  Node / Vite Build
 
-# # Expose port 9000 for php-fpm
-# EXPOSE 9000
+FROM node:20-alpine AS frontend
 
-# CMD ["php-fpm"]
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build || echo "Skipping frontend build"
+
+
+
+#  Final Runtime (PHP-FPM + Nginx)
+
+FROM php:8.2-fpm-alpine
+
+RUN apk add --no-cache nginx supervisor bash libpng-dev libjpeg-turbo-dev freetype-dev zip libzip-dev oniguruma-dev icu-dev \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo_mysql mbstring exif pcntl bcmath zip intl \
+    && apk del .build-deps
+
+WORKDIR /var/www/html
+
+COPY . .
+COPY --from=vendor /app/vendor /var/www/html/vendor
+COPY --from=frontend /app/public/build /var/www/html/public/build
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/supervisord.conf /etc/supervisord.conf
+
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+EXPOSE 80
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
