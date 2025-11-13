@@ -1,38 +1,12 @@
-
 /vendor
 /node_modules
+/public/build
 /storage/logs
 /storage/framework/cache
-/storage/framework/sessions
 /storage/framework/views
-
-
+.git
+.gitignore
 .env
-.env.* 
-.phpunit.result.cache
-
-
-/docker-compose.yml
-/Dockerfile
-
-/.dockerignore
-
-/package-lock.json
-
-
-.idea
-.vscode
-*.log
-*.bak
-*.tmp
-*.swp
-*.DS_Store
-Thumbs.db
-
-# ------------------------------------
-# 🧪 Tests / Docs (not needed in prod)
-# ------------------------------------
-/tests
-/.git
-/.github
-/docs
+.DS_Store
+npm-debug.log
+docker-compose.yml
