@@ -17,7 +17,10 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 
 # Install dependencies without triggering Laravel scripts
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader  --no-scripts
+RUN composer install  --no-interaction --prefer-dist --optimize-autoloader  --no-scripts
+
+#  Disable NunoMaduro\Collision provider automatically if still present
+# RUN sed -i "/NunoMaduro\\\\Collision/d" config/app.php || true
 
 # Copy app files
 COPY . .
@@ -45,8 +48,12 @@ RUN npm run build || echo "Skipping Vite build..."
 
 FROM php:8.2-fpm-alpine
 
-# Install runtime dependencies
-RUN apk add --no-cache nginx supervisor bash libpng libjpeg-turbo freetype libzip
+# Install runtime dependencies + PHP extension dependencies
+RUN apk add --no-cache nginx supervisor bash netcat-openbsd \
+    libpng libpng-dev libjpeg-turbo libjpeg-turbo-dev freetype freetype-dev \
+    libzip libzip-dev icu icu-dev oniguruma oniguruma-dev zlib zlib-dev \
+    && docker-php-ext-install pdo pdo_mysql gd zip intl mbstring \
+    && apk del libpng-dev libjpeg-turbo-dev freetype-dev libzip-dev icu-dev oniguruma-dev zlib-dev
 
 # Set working directory
 WORKDIR /var/www/html
@@ -54,18 +61,31 @@ WORKDIR /var/www/html
 # Copy application code
 COPY . .
 
+# Copy PHP extensions and configs from vendor stage
+
+COPY --from=vendor /usr/local/lib/php/extensions /usr/local/lib/php/extensions
+COPY --from=vendor /usr/local/etc/php/conf.d /usr/local/etc/php/conf.d
+
 # Copy built vendor + frontend assets
 COPY --from=vendor /app/vendor /var/www/html/vendor
 COPY --from=frontend /app/public/build /var/www/html/public/build
 
 # Copy configs
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/default.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/entrypoint.sh /entrypoint.sh
 
 # Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /entrypoint.sh 
+
+RUN mkdir -p /var/www/html/storage/framework/cache \
+    && mkdir -p /var/www/html/storage/framework/sessions \
+    && mkdir -p /var/www/html/storage/framework/views \
+    && mkdir -p /var/www/html/storage/framework/cache/data \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+
 
 # Expose HTTP port
 EXPOSE 80
