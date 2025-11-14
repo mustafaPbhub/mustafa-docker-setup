@@ -7,13 +7,15 @@ use App\Models\User;
 use App\Models\UserAccess;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Cache;
 use PgSql\Lob;
 
 trait Crud{
 
     public static function columns($table = null){
-        $columns = Schema::getColumnListing($table);
-        return $columns;
+        return Cache::remember('table_columns_' . $table, 3600, function() use ($table) {
+            return Schema::getColumnListing($table);
+        });
     }
     public static function roles($route , $status){
         $checkAdmin  =  User::where(['id' => Auth::user()->id, 'role' => 1])->first();
