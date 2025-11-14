@@ -9,12 +9,15 @@ use Illuminate\Database\Eloquent\Model;
 class Redirection extends Model
 {
     use HasFactory ,  Crud;
-    protected $fillable = [];
+    protected $fillable = [
+        'old_link',
+        'new_link',
+        'code',
+        'type',
+        'created_by',
+        'updated_by'
+    ];
     public $table = 'redirections';
-    public function __construct(array $attributes = []){
-        parent::__construct($attributes);
-        $this->fillable = Crud::columns($this->table);
-    }
     static public function check_url($route){
         $name            = "";
         $oldURL          = Redirection::where('old_link', url()->current())->first();
